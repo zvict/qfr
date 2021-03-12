@@ -47,7 +47,7 @@ protected:
 ///		10e-13	..	23 qubits
 /// The accuracy of double floating points allows for a minimal CN::TOLERANCE value of 10e-15
 ///	Utilizing more qubits requires the use of fp=long double
-constexpr unsigned short QFT_MAX_QUBITS = 11;
+constexpr unsigned short QFT_MAX_QUBITS = 13;
 
 INSTANTIATE_TEST_SUITE_P(QFT, QFT,
 		testing::Range((unsigned short)QFT_MAX_QUBITS,(unsigned short)(QFT_MAX_QUBITS+1)),
