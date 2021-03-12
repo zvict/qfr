@@ -41,7 +41,7 @@ protected:
 	dd::Edge e{};
 };
 
-constexpr unsigned short GROVER_MAX_QUBITS = 14;
+constexpr unsigned short GROVER_MAX_QUBITS = 15;
 constexpr unsigned int GROVER_NUM_SEEDS = 5;
 constexpr fp GROVER_ACCURACY = 1e-8;
 constexpr fp GROVER_GOAL_PROBABILITY = 0.9;
@@ -49,7 +49,7 @@ constexpr fp GROVER_GOAL_PROBABILITY = 0.9;
 INSTANTIATE_TEST_SUITE_P(Grover,
                          Grover,
                          testing::Combine(
-		                         testing::Range((unsigned short)2, (unsigned short)(GROVER_MAX_QUBITS+1), 3),
+		                         testing::Range((unsigned short)GROVER_MAX_QUBITS, (unsigned short)(GROVER_MAX_QUBITS+1)),
 		                         testing::Range((unsigned int)0, GROVER_NUM_SEEDS)),
                          [](const testing::TestParamInfo<Grover::ParamType>& info) {
 	                         unsigned short nqubits = std::get<0>(info.param);
@@ -86,19 +86,19 @@ TEST_P(Grover, Functionality) {
 	EXPECT_GE(prob, GROVER_GOAL_PROBABILITY);
 }
 
-TEST_P(Grover, Simulation) {
-	std::tie(nqubits, seed) = GetParam();
+// TEST_P(Grover, Simulation) {
+// 	std::tie(nqubits, seed) = GetParam();
 
-	// there should be no error constructing the circuit
-	ASSERT_NO_THROW({qc = std::make_unique<qc::Grover>(nqubits, seed);});
+// 	// there should be no error constructing the circuit
+// 	ASSERT_NO_THROW({qc = std::make_unique<qc::Grover>(nqubits, seed);});
 
-	qc->printStatistics(std::cout);
-	unsigned long long x = dynamic_cast<qc::Grover*>(qc.get())->x;
-	dd::Edge in = dd->makeZeroState(nqubits+1);
-	// there should be no error simulating the circuit
-	ASSERT_NO_THROW({e = qc->simulate(in, dd);});
+// 	qc->printStatistics(std::cout);
+// 	unsigned long long x = dynamic_cast<qc::Grover*>(qc.get())->x;
+// 	dd::Edge in = dd->makeZeroState(nqubits+1);
+// 	// there should be no error simulating the circuit
+// 	ASSERT_NO_THROW({e = qc->simulate(in, dd);});
 
-	auto c = qc->getEntry(dd, e, x, 0);
-	auto prob = CN::mag2(c);
-	EXPECT_GE(prob, GROVER_GOAL_PROBABILITY);
-}
+// 	auto c = qc->getEntry(dd, e, x, 0);
+// 	auto prob = CN::mag2(c);
+// 	EXPECT_GE(prob, GROVER_GOAL_PROBABILITY);
+// }
