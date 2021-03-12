@@ -50,7 +50,7 @@ protected:
 constexpr unsigned short QFT_MAX_QUBITS = 20;
 
 INSTANTIATE_TEST_SUITE_P(QFT, QFT,
-		testing::Range((unsigned short)0,(unsigned short)(QFT_MAX_QUBITS+1), 3),
+		testing::Range((unsigned short)QFT_MAX_QUBITS,(unsigned short)(QFT_MAX_QUBITS+1), 1),
 		[](const testing::TestParamInfo<QFT::ParamType>& info) {
 			unsigned short nqubits = info.param;
 			std::stringstream ss{};
@@ -99,33 +99,33 @@ TEST_P(QFT, Functionality) {
 	}
 }
 
-TEST_P(QFT, Simulation) {
-	nqubits = GetParam();
+// TEST_P(QFT, Simulation) {
+// 	nqubits = GetParam();
 
-	// there should be no error constructing the circuit
-	ASSERT_NO_THROW({qc = std::make_unique<qc::QFT>(nqubits);});
+// 	// there should be no error constructing the circuit
+// 	ASSERT_NO_THROW({qc = std::make_unique<qc::QFT>(nqubits);});
 
-	// there should be no error building the functionality
-	ASSERT_NO_THROW({
-		dd::Edge in = dd->makeZeroState(nqubits);
-        e = qc->simulate(in, dd);
-	});
-	qc->printStatistics(std::cout);
+// 	// there should be no error building the functionality
+// 	ASSERT_NO_THROW({
+// 		dd::Edge in = dd->makeZeroState(nqubits);
+//         e = qc->simulate(in, dd);
+// 	});
+// 	qc->printStatistics(std::cout);
 
-	// QFT DD |0...0> sim should consist of n nodes
-	ASSERT_EQ(dd->size(e), nqubits+1);
+// 	// QFT DD |0...0> sim should consist of n nodes
+// 	ASSERT_EQ(dd->size(e), nqubits+1);
 
-	// Force garbage collection of compute table and complex table
-	dd->garbageCollect(true);
+// 	// Force garbage collection of compute table and complex table
+// 	dd->garbageCollect(true);
 
-	// top edge weight should equal sqrt(0.5)^n
-	EXPECT_NEAR(CN::val(e.w.r), 1, CN::TOLERANCE);
-	EXPECT_NEAR(CN::val(e.w.i), 0, CN::TOLERANCE);
+// 	// top edge weight should equal sqrt(0.5)^n
+// 	EXPECT_NEAR(CN::val(e.w.r), 1, CN::TOLERANCE);
+// 	EXPECT_NEAR(CN::val(e.w.i), 0, CN::TOLERANCE);
 
-	// first column should consist only of 1's
-	for (unsigned long long i = 0; i < std::pow(static_cast<long double>(2), nqubits); ++i) {
-		auto c = qc->getEntry(dd, e, i, 0);
-		EXPECT_NEAR(CN::val(c.r), static_cast<fp>(std::pow(1.L/std::sqrt(2.L), nqubits)), CN::TOLERANCE);
-		EXPECT_NEAR(CN::val(c.i), 0, CN::TOLERANCE);
-	}
-}
+// 	// first column should consist only of 1's
+// 	for (unsigned long long i = 0; i < std::pow(static_cast<long double>(2), nqubits); ++i) {
+// 		auto c = qc->getEntry(dd, e, i, 0);
+// 		EXPECT_NEAR(CN::val(c.r), static_cast<fp>(std::pow(1.L/std::sqrt(2.L), nqubits)), CN::TOLERANCE);
+// 		EXPECT_NEAR(CN::val(c.i), 0, CN::TOLERANCE);
+// 	}
+// }
