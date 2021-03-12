@@ -132,7 +132,7 @@ namespace dd {
     }
 
     Edge Package::normalize(const Edge &e, bool cached) {
-        // std::cout << "NORMALIZING" << std::endl;
+        std::cout << "NORMALIZING" << std::endl;
         int argmax = -1;
 
         bool zero[] = {CN::equalsZero(e.p->e[0].w),
@@ -160,7 +160,7 @@ namespace dd {
 
             sum = std::sqrt(sum);
             auto sumc = cn.lookup(sum, 0);
-            // std::cout << "SUM: " << sum << std::endl;
+            std::cout << "SUM: " << sum << std::endl;
 
             // all equal to zero - make sure to release cached numbers approximately zero, but not exactly zero
             if (argmax == -1) {
@@ -236,7 +236,7 @@ namespace dd {
             }
         }
 
-        // std::cout << "VECTOR" << sum << std::endl;
+        std::cout << "VECTOR" << sum << std::endl;
 
         if (argmax == -1) {
             if (cached) {
@@ -290,6 +290,8 @@ namespace dd {
                 }
             }
         }
+
+        std::cout << "NORMALIZED" << std::endl;
         return r;
     }
 
