@@ -130,6 +130,72 @@ namespace dd {
 
     }
 
+    // ComplexTableEntry *ComplexNumbers::lookupVal(const fp &val) {
+    //     ct_calls++;
+    //     assert(!std::isnan(val));
+
+    //     const auto key = getKey(val);
+
+    //     auto p = ComplexTable[key];
+    //     auto minp = p;
+    //     fp mindis = TOLERANCE;
+    //     bool find = false;
+    //     while (p != nullptr) {
+    //         if (std::fabs(p->val - val) < mindis) {
+    //             mindis = std::fabs(p->val - val);
+    //             minp = p;
+    //             find = true;
+    //         }
+    //         p = p->next;
+    //     }
+    //     if (find) return minp;
+
+    //     mindis = TOLERANCE;
+    //     if (val - TOLERANCE >= 0) {
+    //         const auto key2 = getKey(val - TOLERANCE);
+    //         if (key2 != key) {
+    //             p = ComplexTable[key2];
+    //             minp = p;
+    //             find = false;
+    //             while (p != nullptr) {
+    //                 if (std::fabs(p->val - val) < mindis) {
+    //                     mindis = std::fabs(p->val - val);
+    //                     minp = p;
+    //                     find = true;
+    //                 }
+    //                 p = p->next;
+    //             }
+    //             if (find) return minp;
+    //         }
+    //     }
+
+    //     const auto key3 = getKey(val + TOLERANCE);
+    //     mindis = TOLERANCE;
+    //     if (key3 != key) {
+    //         p = ComplexTable[key3];
+    //         minp = p;
+    //         find = false;
+    //         while (p != nullptr) {
+    //             if (std::fabs(p->val - val) < mindis) {
+    //                 mindis = std::fabs(p->val - val);
+    //                 minp = p;
+    //                 find = true;
+    //             }
+    //             p = p->next;
+    //         }
+    //         if (find) return minp;
+    //     }
+
+    //     ct_miss++;
+    //     auto *r = getComplexTableEntry();
+    //     r->val = val;
+    //     r->next = ComplexTable[key];
+    //     ComplexTable[key] = r;
+
+    //     count++;
+    //     return r;
+    // }
+
     ComplexTableEntry *ComplexNumbers::lookupVal(const fp &val) {
         ct_calls++;
         assert(!std::isnan(val));
@@ -359,24 +425,42 @@ namespace dd {
     void ComplexNumbers::div(Complex &r, const Complex &a, const Complex &b) {
 	    assert(r != ZERO && r != ONE);
 	   	if (equals(a, b)) {
+            // std::cout << "1" << std::endl;
             r.r->val = 1.;
             r.i->val = 0.;
+            // std::cout << "1e" << std::endl;
         } else if (equalsZero(a)) {
+            // std::cout << "2" << std::endl;
             r.r->val = 0.;
             r.i->val = 0.;
+            // std::cout << "2e" << std::endl;
         } else if (equalsOne(b)) {
+            // std::cout << "3" << std::endl;
             r.r->val = val(a.r);
             r.i->val = val(a.i);
+            // std::cout << "3e" << std::endl;
         } else {
+            // std::cout << "4" << std::endl;
 	        auto ar = val(a.r);
 	        auto ai = val(a.i);
 	        auto br = val(b.r);
 	        auto bi = val(b.i);
 
 	        auto cmag = br * br + bi * bi;
+            // std::cout << "CMAG: " << cmag << std::endl;
 
+            // std::cout << "ar * br + ai * bi: " << ar * br + ai * bi << std::endl;
 	        r.r->val = (ar * br + ai * bi) / cmag;
-	        r.i->val = (ai * br - ar * bi) / cmag;
+            // std::cout << "r.r->val: " << r.r->val << std::endl;
+            // std::cout << "ai * br - ar * bi: " << ai * br - ar * bi << std::endl;
+            // std::cout << "(ai * br - ar * bi) / cmag: " << (ai * br - ar * bi) / cmag << std::endl;
+            // if (ai * br - ar * bi < TOLERANCE) {
+            //     r.i->val = 0;
+            // } else {
+            r.i->val = (ai * br - ar * bi) / cmag;
+            // }
+            // std::cout << "r.i->val: " << r.i->val << std::endl;
+            // std::cout << "4e" << std::endl;
 	   	}
     }
 

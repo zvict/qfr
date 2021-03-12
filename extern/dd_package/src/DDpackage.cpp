@@ -132,6 +132,7 @@ namespace dd {
     }
 
     Edge Package::normalize(const Edge &e, bool cached) {
+        // std::cout << "NORMALIZING" << std::endl;
         int argmax = -1;
 
         bool zero[] = {CN::equalsZero(e.p->e[0].w),
@@ -148,24 +149,18 @@ namespace dd {
 
         /// --- Matrix treatment ---
         if (mode == Mode::Matrix || !zero[1] || !zero[3]) {
-            fp max = 0.L;
-            Complex maxc = ComplexNumbers::ONE;
-            // determine max amplitude
+
+            fp sum = 0.L;
+
             for (int i = 0; i < NEDGE; ++i) {
                 if (zero[i]) continue;
-                if (argmax == -1) {
-                    argmax = i;
-                    max = ComplexNumbers::mag2(e.p->e[i].w);
-                    maxc = e.p->e[i].w;
-                } else {
-                    auto mag = ComplexNumbers::mag2(e.p->e[i].w);
-                    if (mag - max > CN::TOLERANCE) {
-                        argmax = i;
-                        max = mag;
-                        maxc = e.p->e[i].w;
-                    }
-                }
+                argmax = i;
+                sum += ComplexNumbers::mag2(e.p->e[i].w);
             }
+
+            sum = std::sqrt(sum);
+            auto sumc = cn.lookup(sum, 0);
+            // std::cout << "SUM: " << sum << std::endl;
 
             // all equal to zero - make sure to release cached numbers approximately zero, but not exactly zero
             if (argmax == -1) {
@@ -189,35 +184,36 @@ namespace dd {
                 if (i == argmax) {
                     if (cached) {
                         if (r.w == ComplexNumbers::ONE)
-                            r.w = maxc;
+                            r.w = sumc;
                         else
-                            CN::mul(r.w, r.w, maxc);
+                            CN::mul(r.w, r.w, sumc);
                     } else {
                         if (r.w == ComplexNumbers::ONE) {
-                            r.w = maxc;
+                            r.w = sumc;
                         } else {
                             auto c = cn.getTempCachedComplex();
-                            CN::mul(c, r.w, maxc);
+                            CN::mul(c, r.w, sumc);
                             r.w = cn.lookup(c);
                         }
                     }
-                    r.p->e[i].w = ComplexNumbers::ONE;
-                } else {
-                    if (zero[i]) {
-                        if (cached && r.p->e[i].w != ComplexNumbers::ZERO)
-                            cn.releaseCached(r.p->e[i].w);
-                        r.p->e[i] = DDzero;
-                        continue;
-                    }
-                    if (cached && !zero[i] && r.p->e[i].w != ComplexNumbers::ONE) {
-                        cn.releaseCached(r.p->e[i].w);
-                    }
-                    if (CN::equalsOne(r.p->e[i].w))
-                        r.p->e[i].w = ComplexNumbers::ONE;
-                    auto c = cn.getTempCachedComplex();
-                    CN::div(c, r.p->e[i].w, maxc);
-                    r.p->e[i].w = cn.lookup(c);
+                    // r.p->e[i].w = ComplexNumbers::ONE;
                 }
+                // else {
+                if (zero[i]) {
+                    if (cached && r.p->e[i].w != ComplexNumbers::ZERO)
+                        cn.releaseCached(r.p->e[i].w);
+                    r.p->e[i] = DDzero;
+                    continue;
+                }
+                if (cached && !zero[i] && r.p->e[i].w != ComplexNumbers::ONE) {
+                    cn.releaseCached(r.p->e[i].w);
+                }
+                if (CN::equalsOne(r.p->e[i].w))
+                    r.p->e[i].w = ComplexNumbers::ONE;
+                auto c = cn.getTempCachedComplex();
+                CN::div(c, r.p->e[i].w, sumc);
+                r.p->e[i].w = cn.lookup(c);
+                // }
             }
             return r;
         }
@@ -239,6 +235,8 @@ namespace dd {
                 sum += ComplexNumbers::mag2(e.p->e[i].w);
             }
         }
+
+        // std::cout << "VECTOR" << sum << std::endl;
 
         if (argmax == -1) {
             if (cached) {
