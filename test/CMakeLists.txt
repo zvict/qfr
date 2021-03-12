@@ -38,8 +38,8 @@ endmacro()
 
 # add unit tests
 package_add_test(${PROJECT_NAME}_test 
-							# ${CMAKE_CURRENT_SOURCE_DIR}/algorithms/test_qft.cpp)
-							${CMAKE_CURRENT_SOURCE_DIR}/algorithms/test_grover.cpp )
+							${CMAKE_CURRENT_SOURCE_DIR}/algorithms/test_qft.cpp)
+							# ${CMAKE_CURRENT_SOURCE_DIR}/algorithms/test_grover.cpp )
 							# ${CMAKE_CURRENT_SOURCE_DIR}/algorithms/test_bernsteinvazirani.cpp
 							# ${CMAKE_CURRENT_SOURCE_DIR}/algorithms/test_entanglement.cpp
                             # ${CMAKE_CURRENT_SOURCE_DIR}/algorithms/test_grcs.cpp

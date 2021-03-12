@@ -11,7 +11,7 @@ namespace dd {
     ComplexTableEntry ComplexNumbers::zeroEntry{0., nullptr, 1};
     ComplexTableEntry ComplexNumbers::oneEntry{1., nullptr, 1};
     ComplexTableEntry *ComplexNumbers::moneEntryPointer{getNegativePointer(&oneEntry)};
-    fp ComplexNumbers::TOLERANCE = 1e-13;
+    fp ComplexNumbers::TOLERANCE = 1e-14;
 
     ComplexNumbers::ComplexNumbers() {
         Cache_Avail_Initial_Pointer = new ComplexTableEntry[INIT_SIZE * 6];
