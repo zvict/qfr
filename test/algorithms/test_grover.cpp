@@ -41,7 +41,7 @@ protected:
 	dd::Edge e{};
 };
 
-constexpr unsigned short GROVER_MAX_QUBITS = 15;
+constexpr unsigned short GROVER_MAX_QUBITS = 13;
 constexpr unsigned int GROVER_NUM_SEEDS = 5;
 constexpr fp GROVER_ACCURACY = 1e-8;
 constexpr fp GROVER_GOAL_PROBABILITY = 0.9;
