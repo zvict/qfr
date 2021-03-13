@@ -11,7 +11,7 @@ namespace dd {
     ComplexTableEntry ComplexNumbers::zeroEntry{0., nullptr, 1};
     ComplexTableEntry ComplexNumbers::oneEntry{1., nullptr, 1};
     ComplexTableEntry *ComplexNumbers::moneEntryPointer{getNegativePointer(&oneEntry)};
-    fp ComplexNumbers::TOLERANCE = 1e-10;
+    fp ComplexNumbers::TOLERANCE = 1e-6;
 
     ComplexNumbers::ComplexNumbers() {
         Cache_Avail_Initial_Pointer = new ComplexTableEntry[INIT_SIZE * 6];
@@ -130,72 +130,6 @@ namespace dd {
 
     }
 
-    // ComplexTableEntry *ComplexNumbers::lookupVal(const fp &val) {
-    //     ct_calls++;
-    //     assert(!std::isnan(val));
-
-    //     const auto key = getKey(val);
-
-    //     auto p = ComplexTable[key];
-    //     auto minp = p;
-    //     fp mindis = TOLERANCE;
-    //     bool find = false;
-    //     while (p != nullptr) {
-    //         if (std::fabs(p->val - val) < mindis) {
-    //             mindis = std::fabs(p->val - val);
-    //             minp = p;
-    //             find = true;
-    //         }
-    //         p = p->next;
-    //     }
-    //     if (find) return minp;
-
-    //     mindis = TOLERANCE;
-    //     if (val - TOLERANCE >= 0) {
-    //         const auto key2 = getKey(val - TOLERANCE);
-    //         if (key2 != key) {
-    //             p = ComplexTable[key2];
-    //             minp = p;
-    //             find = false;
-    //             while (p != nullptr) {
-    //                 if (std::fabs(p->val - val) < mindis) {
-    //                     mindis = std::fabs(p->val - val);
-    //                     minp = p;
-    //                     find = true;
-    //                 }
-    //                 p = p->next;
-    //             }
-    //             if (find) return minp;
-    //         }
-    //     }
-
-    //     const auto key3 = getKey(val + TOLERANCE);
-    //     mindis = TOLERANCE;
-    //     if (key3 != key) {
-    //         p = ComplexTable[key3];
-    //         minp = p;
-    //         find = false;
-    //         while (p != nullptr) {
-    //             if (std::fabs(p->val - val) < mindis) {
-    //                 mindis = std::fabs(p->val - val);
-    //                 minp = p;
-    //                 find = true;
-    //             }
-    //             p = p->next;
-    //         }
-    //         if (find) return minp;
-    //     }
-
-    //     ct_miss++;
-    //     auto *r = getComplexTableEntry();
-    //     r->val = val;
-    //     r->next = ComplexTable[key];
-    //     ComplexTable[key] = r;
-
-    //     count++;
-    //     return r;
-    // }
-
     ComplexTableEntry *ComplexNumbers::lookupVal(const fp &val) {
         ct_calls++;
         assert(!std::isnan(val));
@@ -203,36 +137,53 @@ namespace dd {
         const auto key = getKey(val);
 
         auto p = ComplexTable[key];
+        auto minp = p;
+        fp mindis = TOLERANCE;
+        bool find = false;
         while (p != nullptr) {
-            if (std::fabs(p->val - val) < TOLERANCE) {
-                return p;
+            if (std::fabs(p->val - val) < mindis) {
+                mindis = std::fabs(p->val - val);
+                minp = p;
+                find = true;
             }
             p = p->next;
         }
+        if (find) return minp;
 
+        mindis = TOLERANCE;
         if (val - TOLERANCE >= 0) {
             const auto key2 = getKey(val - TOLERANCE);
             if (key2 != key) {
                 p = ComplexTable[key2];
+                minp = p;
+                find = false;
                 while (p != nullptr) {
-                    if (std::fabs(p->val - val) < TOLERANCE) {
-                        return p;
+                    if (std::fabs(p->val - val) < mindis) {
+                        mindis = std::fabs(p->val - val);
+                        minp = p;
+                        find = true;
                     }
                     p = p->next;
                 }
+                if (find) return minp;
             }
         }
 
         const auto key3 = getKey(val + TOLERANCE);
-
+        mindis = TOLERANCE;
         if (key3 != key) {
             p = ComplexTable[key3];
+            minp = p;
+            find = false;
             while (p != nullptr) {
-                if (std::fabs(p->val - val) < TOLERANCE) {
-                    return p;
+                if (std::fabs(p->val - val) < mindis) {
+                    mindis = std::fabs(p->val - val);
+                    minp = p;
+                    find = true;
                 }
                 p = p->next;
             }
+            if (find) return minp;
         }
 
         ct_miss++;
@@ -244,6 +195,55 @@ namespace dd {
         count++;
         return r;
     }
+
+    // ComplexTableEntry *ComplexNumbers::lookupVal(const fp &val) {
+    //     ct_calls++;
+    //     assert(!std::isnan(val));
+
+    //     const auto key = getKey(val);
+
+    //     auto p = ComplexTable[key];
+    //     while (p != nullptr) {
+    //         if (std::fabs(p->val - val) < TOLERANCE) {
+    //             return p;
+    //         }
+    //         p = p->next;
+    //     }
+
+    //     if (val - TOLERANCE >= 0) {
+    //         const auto key2 = getKey(val - TOLERANCE);
+    //         if (key2 != key) {
+    //             p = ComplexTable[key2];
+    //             while (p != nullptr) {
+    //                 if (std::fabs(p->val - val) < TOLERANCE) {
+    //                     return p;
+    //                 }
+    //                 p = p->next;
+    //             }
+    //         }
+    //     }
+
+    //     const auto key3 = getKey(val + TOLERANCE);
+
+    //     if (key3 != key) {
+    //         p = ComplexTable[key3];
+    //         while (p != nullptr) {
+    //             if (std::fabs(p->val - val) < TOLERANCE) {
+    //                 return p;
+    //             }
+    //             p = p->next;
+    //         }
+    //     }
+
+    //     ct_miss++;
+    //     auto *r = getComplexTableEntry();
+    //     r->val = val;
+    //     r->next = ComplexTable[key];
+    //     ComplexTable[key] = r;
+
+    //     count++;
+    //     return r;
+    // }
 
     Complex ComplexNumbers::lookup(const Complex &c) {
         if (c == ZERO) {
